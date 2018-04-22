@@ -9,6 +9,7 @@ class Observer(object):
         def update(self, object):
             pass
 
+
 # Observable follows the design pattern for observables, code is taken from class slide but is slightly modified.
 class Observable(object):
     def __init__(self):
