@@ -1,49 +1,50 @@
 
 from gameLogic.House import House
-from gameLogic.observe import Observer
+from gameLogic.Observe import Observer, Observable
 
 
-class Neighborhood(Observer):
+class Neighborhood(Observer, Observable):
     def __init__(self, gridSize):
         super().__init__()
+        Observable.__init__(self)
         #TODO: Make 2d array for all these fucking houses
-        self.houses = []
-        self.size = gridSize
-        self.housesremaining = self.size * self.size
+        self.__houses = []
+        self.__size = gridSize
+        self.__housesremaining = self.__size * self.__size
         for i in range(0, gridSize):
             tempArr = []
-            self.houses.append(tempArr)
+            self.__houses.append(tempArr)
             for j in range(0, gridSize):
                 a = House()
                 tempArr.append(a)
                 a.add_observer(self)
                 if(i > 0):
-                    a.setn(self.houses[i-1][j])
-                    self.houses[i-1][j].sets(a)
+                    a.setn(self.__houses[i - 1][j])
+                    self.__houses[i - 1][j].sets(a)
                 if j > 0:
-                    a.setw(self.houses[i][j-1])
-                    self.houses[i][j-1].sete(a)
-        for i in range (0, self.size):
-            for j in range(0, self.size):
-                self.houses[i][j].checkhouse()
+                    a.setw(self.__houses[i][j - 1])
+                    self.__houses[i][j - 1].sete(a)
+        for i in range (0, self.__size):
+            for j in range(0, self.__size):
+                self.__houses[i][j].checkhouse()
          #   i.checkhouse(self)
 
     def getstartloc(self):
-        return self.houses[0][0]
+        return self.__houses[0][0]
 
-    def update(self):
-        self.housesremaining -= 1
-        print("HOUSES REMAINING = " + str(self.housesremaining))
-        if self.housesremaining == 0:
-            print("you didded it")
+    def update(self, object):
+        self.__housesremaining -= 1
+        print("HOUSES REMAINING = " + str(self.__housesremaining))
+        if self.__housesremaining == 0:
+            self.update_observer(self)
         return
 
     def map(self):
         maps = ""
-        for i in range(0,self.size):
+        for i in range(0, self.__size):
             maps += "\n"
-            for j in range(0,self.size):
-                maps += self.houses[i][j].getmapicon()
+            for j in range(0, self.__size):
+                maps += self.__houses[i][j].getmapicon()
 
         print(maps)
         print("Map Legend: X=defeated house, O=undefeated house,"

@@ -1,6 +1,6 @@
 import random
 from gameLogic.Monster import Vampire, Werewolf, Zombie, Ghoul
-from gameLogic.observe import Observable, Observer
+from gameLogic.Observe import Observable, Observer
 
 
 class House(Observable, Observer):
@@ -17,46 +17,13 @@ class House(Observable, Observer):
         for i in range(0, self.numMonsters):
             self.addmonster(random.randint(0,3))
 
-    def checkhouse(self):
-        if self.numMonsters == 0:
-            self.defeated = True
-            self.update_observer()
-        # weapon is the name of the weapon, damage is the damage provided by
-        # the players modifier * weapon mod
 
-        # creates empty array monstdamage, then calls the attackturn function for each monster in the house,
-        # appending the returned value to the array, (returned value is damage the monster does to player)
-        # then returns the new list.
-        # TODO add something for dead monsters
     def attackhouse(self, weapon, damage):
         monstdamage=[]
         for i in self.monsters:
             monstdamage.append(i.attackturn(weapon, damage))
         return monstdamage
 
-    def setw(self, house):
-        self.westNeighbor = house
-
-    def sete(self, house):
-        self.eastNeighbor = house
-
-    def setn(self, house):
-        self.northNeighbor = house
-
-    def sets(self, house):
-        self.southNeighbor = house
-
-    def getw(self):
-        return self.westNeighbor
-
-    def gete(self):
-        return self.eastNeighbor
-
-    def getn(self):
-        return self.northNeighbor
-
-    def gets(self):
-        return self.southNeighbor
     # Uses a number to decide what type of monster.
     # 0=zombie, 1=vampire, 2=werewolves, 3=ghoul
     def addmonster(self, monster):
@@ -76,11 +43,11 @@ class House(Observable, Observer):
         a.add_observer(self)
         self.monsters.append(a)
 
-    def update(self):
+    def update(self, object):
         self.numMonsters -=1
         if self.numMonsters == 0:
             self.defeated = True
-            self.update_observer()
+            self.update_observer(self)
 
     def getmapicon(self):
         if self.playeroccupied:
@@ -93,12 +60,6 @@ class House(Observable, Observer):
                 return "X"
             else:
                 return "O"
-
-    def occupy(self):
-        self.playeroccupied = True
-
-    def unoccupy(self):
-        self.playeroccupied = False
 
     def peekHouse(self, peek):
         if peek:
@@ -124,4 +85,44 @@ class House(Observable, Observer):
         print(str(zombies) + " zombies, " + str(ghouls) + " ghouls, " + str(vampires) +
               " vampires, " + str(werewolves) + " werewolves, and " + str(persons) + " people.")
 
-    #TODO Add observations with monsters, when it hits 0 house is freed
+    def occupy(self):
+        self.playeroccupied = True
+
+    def unoccupy(self):
+        self.playeroccupied = False
+
+    def checkhouse(self):
+        if self.numMonsters == 0:
+            self.defeated = True
+            self.update_observer(self)
+        # weapon is the name of the weapon, damage is the damage provided by
+        # the players modifier * weapon mod
+
+        # creates empty array monstdamage, then calls the attackturn function for each monster in the house,
+        # appending the returned value to the array, (returned value is damage the monster does to player)
+        # then returns the new list.
+        # TODO add something for dead monsters
+
+    def setw(self, house):
+        self.westNeighbor = house
+
+    def sete(self, house):
+        self.eastNeighbor = house
+
+    def setn(self, house):
+        self.northNeighbor = house
+
+    def sets(self, house):
+        self.southNeighbor = house
+
+    def getw(self):
+        return self.westNeighbor
+
+    def gete(self):
+        return self.eastNeighbor
+
+    def getn(self):
+        return self.northNeighbor
+
+    def gets(self):
+        return self.southNeighbor

@@ -5,16 +5,16 @@ class Observer(object):
         __metaclass__ = ABCMeta
 
         @abstractmethod
-        def update(self):
+        def update(self, object):
             pass
 
 class Observable(object):
     def __init__(self):
         self.observers = []
 
-    def update_observer(self):
+    def update_observer(self, object):
         for i in self.observers:
-               i.update()
+               i.update(object)
 
     def add_observer(self, observer):
         if not observer in self.observers:
@@ -26,3 +26,4 @@ class Observable(object):
 
     def remove_all_observers(self):
         self.observers = []
+
