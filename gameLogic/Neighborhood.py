@@ -2,12 +2,14 @@
 from gameLogic.House import House
 from gameLogic.Observe import Observer, Observable
 
-
+# Neighborhood is an object that contains all the houses, observes all the houses, and is observable by the game.
 class Neighborhood(Observer, Observable):
+
+    # Initializes neighborhood, makes a 2d array of all the houses, as well as setting who their neighbors are and
+    # adding neighborhood as their observer.
     def __init__(self, gridSize):
         super().__init__()
         Observable.__init__(self)
-        #TODO: Make 2d array for all these fucking houses
         self.__houses = []
         self.__size = gridSize
         self.__housesremaining = self.__size * self.__size
@@ -27,11 +29,14 @@ class Neighborhood(Observer, Observable):
         for i in range (0, self.__size):
             for j in range(0, self.__size):
                 self.__houses[i][j].checkhouse()
-         #   i.checkhouse(self)
 
+
+    # getstartloc returns the topleft house.
     def getstartloc(self):
         return self.__houses[0][0]
 
+    # update prints out how many houses are remaining, if there are none it updates the game so that the player
+    # can win.
     def update(self, object):
         self.__housesremaining -= 1
         print("HOUSES REMAINING = " + str(self.__housesremaining))
@@ -39,6 +44,7 @@ class Neighborhood(Observer, Observable):
             self.update_observer(self)
         return
 
+    # map formats and prints a map of the neighborhood as well as where the player is.
     def map(self):
         maps = ""
         for i in range(0, self.__size):

@@ -1,93 +1,103 @@
 import random
 from gameLogic.Observe import Observable
 
-
+# Npc is a class that has several monster subclasses. It is observable by the house.
 class NPC(Observable):
+
+    #initializes the generic monster, makes the monster observable.
     def __init__(self):
+            Observable.__init__(self)
+            self.name = 'generic'
+            self.minattack = 1
+            self.maxattack = 2
+            self.health = 0
+            self.weakness = 'generic'
+            self.person = False
 
-        Observable.__init__(self)
-        self.name = 'generic'
-        self.__minattack = 1
-        self.__maxattack = 2
-        self.__health = 0
-        self.__weakness = 'generic'
-        self.person = False
-
-    def gethealth(self):
-        return self.__health
-
+    # getattack returns the attack of the monster between the minattack and the maxattack
     def getattack(self):
         if not self.person:
-          return random.randint(self.__minattack, self.__maxattack)
+          return random.randint(self.minattack, self.maxattack)
         else:
             return -1
 
+    # getweakness checks to see if the weapon given is the monsters weakness.
     def getweakness(self, weapon):
-        if weapon == self.__weakness:
+        if weapon == self.weakness:
             return True
         return False
 
+    # getname returns the name of the monster
     def getname(self):
         return self.name
 
+    # attackturn is when the monster takes damage and gives damaage. If the monster is a person, it instead gives health
+    # to the player.
     def attackturn(self, weapon, damage):
-        # In turn the monst takes damage then deals damage to the player.
-        # if the monst turns into a friendly it deals negative damage
+
         if(self.person == False):
             self.takedamage(weapon, damage)
         else:
             print("A Person gives you candy! +1 candy +1 health!")
         return self.getattack()
-    # if returned value is -1 then give player candy
 
-    # Overrides to take specific damage for weakness
+    # takedamage determines the damage based on the damage the player has used, and if the monster is weak to
+    # the weapon the player used. If the monsters health reaches 0 it turns into a person.
     def takedamage(self, weapon, damage):
         if self.getweakness(weapon) is True:
-            self.__health = self.__health - damage
+            self.health = self.health - damage
         else:
-            self.__health = self.__health - damage
-        if self.__health <= 0:
+            self.health = self.health - damage
+        if self.health <= 0:
             self.turnperson()
         return
 
+    # turnperson updates the observer when the monster has reached 0 health, and converts the monster into a player.
     def turnperson(self):
         self.update_observer(self)
         self.name = 'person'
-        self.__weakness = 'none'
-        self.__health = 100
+        self.weakness = 'none'
+        self.health = 100
         self.person = True
 
 class Ghoul(NPC):
 
+    #initializes monster-specific values, such as attack and weaknesses.
     def __init__(self):
-        super(). __init__()
+        super().__init__()
         self.name = 'ghoul'
-        self.__minattack = 15
-        self.__maxattack = 31
-        self.__weakness = "NerdBombs"
-        self.__health = random.randint(40,80)
+        self.minattack = 15
+        self.maxattack = 31
+        self.weakness = "NerdBombs"
+        self.health = random.randint(40,80)
 
+    # takedamage determines the damage based on the damage the player has used, and if the monster is weak to
+    # the weapon the player used. If the monsters health reaches 0 it turns into a person.
     def takedamage(self, weapon, damage):
         if self.getweakness(weapon) is True:
-            self.__health = self.__health - int((damage * 5))
+            self.health = self.health - int((damage * 5))
             print("Critical! The Ghoul took "+ str(int(damage*5)) + " damage from that " + weapon + ", good job!")
         else:
-            self.__health = self.__health - damage
+            self.health = self.health - damage
             print("The Ghoul took " + str(damage) + " damage from that " + weapon + ", nice!")
-        if self.__health <= 0:
+        if self.health <= 0:
             print("The Ghoul has turned into a person!")
             self.turnperson()
         return
 
 class Vampire(NPC):
+
+    #initializes monster-specific values, such as attack and weaknesses.
     def __init__(self):
         super().__init__()
         self.name = 'vampire'
-        self.__minattack = 10
-        self.__maxattack = 21
-        self.__weakness = 'ChocolateBars'
+        self.minattack = 10
+        self.maxattack = 21
+        self.weakness = 'ChocolateBars'
         self.health = random.randint(100,200)
 
+    # takedamage determines the damage based on the damage the player has used, and if the monster is weak to
+    # the weapon the player used. If the monsters health reaches 0 it turns into a person.
     def takedamage(self, weapon, damage):
         if self.getweakness(weapon) is True:
             self.health = self.health
@@ -102,6 +112,7 @@ class Vampire(NPC):
 
 class Werewolf(NPC):
 
+    #initializes monster-specific values, such as attack and weaknesses.
     def __init__(self):
         super().__init__()
         self.name = 'werewolf'
@@ -111,6 +122,8 @@ class Werewolf(NPC):
         self.weakness2 = 'SourStraws'
         self.health = 200
 
+    # getweakness checks to see if the weakness of the monster is the same as the weapon, returns true if it is.
+    # because the werewolf has two weaknesses, it needs its own function for it.
     def getweakness(self, weapon):
         if weapon == self.weakness:
             return True
@@ -131,6 +144,7 @@ class Werewolf(NPC):
 
 class Zombie(NPC):
 
+    #initializes monster-specific values, such as attack and weaknesses.
     def __init__(self):
         super().__init__()
         self.name = 'zombie'
@@ -139,7 +153,8 @@ class Zombie(NPC):
         self.weakness = 'SourStraws'
         self.health = random.randint(50,100)
 
-
+    # takedamage determines the damage based on the damage the player has used, and if the monster is weak to
+    # the weapon the player used. If the monsters health reaches 0 it turns into a person.
     def takedamage(self, weapon, damage):
         if self.getweakness(weapon) is True:
             print("Critical! The Zombie took " + str(int(damage*2)) + " damage from that " + weapon + ", good job!")

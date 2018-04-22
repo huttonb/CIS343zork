@@ -2,8 +2,11 @@ import random
 from gameLogic.Monster import Vampire, Werewolf, Zombie, Ghoul
 from gameLogic.Observe import Observable, Observer
 
-
+# House is a class that contains 0-10 monsters, and controls their attack phases for them. It observes the monsters,
+# and is observable by the neighborhood.
 class House(Observable, Observer):
+
+    # initializes house, creates monsters in the house, and observes the monsters.
     def __init__(self):
         super().__init__()
         self.monsters = []
@@ -17,15 +20,17 @@ class House(Observable, Observer):
         for i in range(0, self.numMonsters):
             self.addmonster(random.randint(0,3))
 
-
+    # attackhouse creates a list for the damage that the monster deals to the player, then lets the player attack
+    # every monster, with the return being the monsters damage. At the end of the players attack attackhouse returns
+    # the list of damage the monsters dealt to the player.
     def attackhouse(self, weapon, damage):
         monstdamage=[]
         for i in self.monsters:
             monstdamage.append(i.attackturn(weapon, damage))
         return monstdamage
 
-    # Uses a number to decide what type of monster.
-    # 0=zombie, 1=vampire, 2=werewolves, 3=ghoul
+    #  Add monster creates a random monster for the house. Uses a number to decide what type of monster.
+    # 0=zombie, 1=vampire, 2=werewolves, 3=ghoul. Afterwards it makes the house the observer for them.
     def addmonster(self, monster):
         if monster == 0:
             a = Zombie()
@@ -39,16 +44,20 @@ class House(Observable, Observer):
             print("Monster ID is " + str(monster))
             print("Monster ID not Valid")
             return
-            #TODO Check to make sure this is actually working
+
         a.add_observer(self)
         self.monsters.append(a)
 
+    # update updates whenever a monster dies. If the number of monsters in the house reaches zero, the house is declared
+    # defeated and it updates the neighborhood.
     def update(self, object):
         self.numMonsters -=1
         if self.numMonsters == 0:
             self.defeated = True
             self.update_observer(self)
 
+    # getmapicon returns a specific icon depending on whether or not it is occupied or defeated. For formatting
+    # purposes.
     def getmapicon(self):
         if self.playeroccupied:
             if self.defeated == True:
@@ -61,7 +70,9 @@ class House(Observable, Observer):
             else:
                 return "O"
 
-    def peekHouse(self, peek):
+    # peekhouse prints out the monsters in the house. If peek is true, you peek through a window and it displays
+    # a seperate message, otherwise it assumes you are currently in combat.
+    def peekhouse(self, peek):
         if peek:
             print("You peek through the window of the house and see...")
         else:
@@ -85,23 +96,22 @@ class House(Observable, Observer):
         print(str(zombies) + " zombies, " + str(ghouls) + " ghouls, " + str(vampires) +
               " vampires, " + str(werewolves) + " werewolves, and " + str(persons) + " people.")
 
+    # occupy changes the house to occupied.
     def occupy(self):
         self.playeroccupied = True
 
+    # unoccupy changes the house to unoccupied.
     def unoccupy(self):
         self.playeroccupied = False
 
+    # checkhouse checks to see if there are any monsters left in the house, if there aren't it updates its observer.
     def checkhouse(self):
         if self.numMonsters == 0:
             self.defeated = True
             self.update_observer(self)
-        # weapon is the name of the weapon, damage is the damage provided by
-        # the players modifier * weapon mod
 
-        # creates empty array monstdamage, then calls the attackturn function for each monster in the house,
-        # appending the returned value to the array, (returned value is damage the monster does to player)
-        # then returns the new list.
-        # TODO add something for dead monsters
+    # the set(direction) and get(direction) functions will set what house in the cardinal direction of this house,
+    # and return what house is in the cardinal direction of this house, respectively.
 
     def setw(self, house):
         self.westNeighbor = house
